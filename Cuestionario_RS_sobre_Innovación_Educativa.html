@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Representaciones Sociales de Académicos sobre la Innovación Educativa</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#5b6475;--line:#d9dde5;--ac:#1f5fae;--ok:#1b7f4b;--err:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#14171c;--card:#1d2128;--tx:#e8ebf0;--mut:#9aa3b2;--line:#323946;--ac:#6aa5ee;--ok:#5fc58b;--err:#f08a82}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 14px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+h1{font-size:1.35rem;margin:0 0 6px}h2{font-size:1.1rem;margin:26px 0 4px;color:var(--ac)}
+.sub{color:var(--mut);font-size:.95rem}
+.q>label,.q>.lb{display:block;font-weight:600;margin-bottom:8px}
+.q .n{color:var(--ac);margin-right:4px}
+select,input[type=text],textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2 span{display:block;font-size:.9rem;color:var(--mut);margin-bottom:3px}
+.words{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px 18px}
+.opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.grid{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:center;font-size:.92rem}
+th:first-child,td:first-child{text-align:left}
+td input[type=text]{margin-top:5px;font-size:.88rem}
+button{font:inherit;border:0;border-radius:8px;padding:11px 22px;background:var(--ac);color:#fff;cursor:pointer;font-weight:600}
+button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac);padding:6px 12px;font-size:.85rem}
+button:disabled{opacity:.6;cursor:wait}
+#msg{margin-top:14px;font-weight:600}.ok{color:var(--ok)}.er{color:var(--err)}
+.hint{font-size:.85rem;color:var(--mut)}
+@media(max-width:600px){.row2{grid-template-columns:1fr}.words{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="card">
+<h1>Representaciones Sociales de Académicos sobre la Innovación Educativa</h1>
+<div class="sub">Nº SIREI-UV 280972026140</div>
+<p>Apreciable colega,</p>
+<p>Estamos investigando sobre las ideas, percepciones, actitudes y creencias que tenemos los académicos universitarios sobre la innovación académica. Le solicitamos llenar el siguiente cuestionario cuyos datos serán manejados estadísticamente de manera confidencial con fines analíticos.</p>
+<p>Muchas gracias por su colaboración.</p>
+</div>
+
+<form id="f" novalidate><div id="qs"></div>
+<button id="btn" type="submit">Enviar respuestas</button>
+<div id="msg" role="status"></div>
+</form>
+<p class="hint" id="cfgbox" style="display:none">Modo configuración: aún no se han capturado la URL ni los campos de Google Forms. <button type="button" class="sec" id="cfgbtn">Ver plantilla de campos</button></p>
+<textarea id="tpl" style="display:none;min-height:240px;font-family:monospace;font-size:.8rem" readonly></textarea>
+</main>
+
+<script>
+/* ============ CONFIGURACIÓN DE GOOGLE FORMS ============ */
+// 1) URL de envío del formulario (termina en /formResponse)
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe_dSnI6r2ioWpy_VHaJS_ZyIuXuGMXv1mxDkAoqGutr2RypQ/formResponse";   // ej. "https://docs.google.com/forms/d/e/XXXXXXXX/formResponse"
+// 2) Identificador entry.XXXXXXXXX de cada pregunta (ver botón "Ver plantilla de campos")
+const ENTRY = {
+  "p1_1_dependencia": "entry.1139831350",
+  "p1_2_tiempo": "entry.1515006421",
+  "p1_2_contrato": "entry.821306617",
+  "p1_3_grado": "entry.1780602044",
+  "p1_3_disciplina": "entry.1273452819",
+  "p1_4_cursos": "entry.1004067946",
+  "p1_5_1": "entry.591605004",
+  "p1_5_2": "entry.1937654184",
+  "p1_5_3": "entry.560798286",
+  "p1_5_4": "entry.394019216",
+  "p1_5_5": "entry.474962903",
+  "p1_5_6": "entry.492986641",
+  "p1_5_7": "entry.635327090",
+  "p1_5_8": "entry.1220347892",
+  "p1_5_9": "entry.1503313539",
+  "p1_5_10": "entry.218463885",
+  "p1_5_10_cual": "entry.1061799763",
+  "p2_1": "entry.1039324539",
+  "p2_2": "entry.1372037427",
+  "p2_3": "entry.483458492",
+  "p2_4": "entry.258081937",
+  "p2_5": "entry.1677610189",
+  "p2_6": "entry.1453386279",
+  "p2_7": "entry.1108804767",
+  "p3_1": "entry.1879364251",
+  "p3_2": "entry.2083002869",
+  "p3_3": "entry.633117769",
+  "p3_4": "entry.800736401",
+  "p3_5": "entry.782453002",
+  "p3_6": "entry.98847719",
+  "p3_7": "entry.1285694647",
+  "p3_8": "entry.2071412448",
+  "p3_9": "entry.2104083032",
+  "p4_1": "entry.477854002",
+  "p4_2": "entry.1617096329",
+  "p4_3": "entry.829105293",
+  "p4_4": "entry.1128354044",
+  "p4_5": "entry.1281155459",
+  "p4_6": "entry.127145540",
+  "p4_7": "entry.1086699730",
+  "p4_8": "entry.594608928",
+  "p4_9": "entry.238998175",
+  "p5_1": "entry.2135059759",
+  "p5_2": "entry.1880016281",
+  "p5_3": "entry.1413318646",
+  "p5_4": "entry.1050968219",
+  "p5_5": "entry.1711342168",
+  "p5_6": "entry.1497804356",
+  "p5_7": "entry.1463063880",
+  "p5_8": "entry.1348575395",
+  "p5_9": "entry.118451128"
+  // "p1_1_dependencia": "entry.123456789",
+};
+/* ======================================================== */
+
+// Catálogo de dependencias: solo región Xalapa
+const DEP = `11102|Facultad de Ingeniería Civil
+11103|Facultad de Ingeniería Mecánica y Eléctrica
+11104|Facultad de Ciencias Químicas
+11105|Facultad de Química Farmacéutica Biológica
+11106|Facultad de Física
+11107|Facultad de Matemáticas
+11108|Facultad de Arquitectura
+11109|Facultad de Instrumentación Electrónica
+11110|Instituto de Ciencias Básicas
+11112|Instituto de Investigaciones en Inteligencia Artificial
+11113|Instituto de Química Aplicada
+11114|Centro de Ciencias de la Tierra
+11115|Centro de Investigación y Desarrollo en Alimentos (C-IDEA)
+11201|Facultad de Derecho
+11203|Facultad de Idiomas
+11204|Facultad de Pedagogía
+11205|Facultad de Letras Españolas
+11206|Facultad de Historia
+11207|Facultad de Filosofía
+11208|Facultad de Antropología
+11209|Facultad de Sociología
+11211|Instituto de Antropología
+11212|Museo de Antropología
+11213|Instituto de Investigaciones Jurídicas
+11214|Instituto de Investigaciones Histórico-Sociales
+11215|Instituto de Investigaciones Lingüístico-Literarias
+11216|Instituto de Investigaciones en Educación
+11218|Instituto de Filosofía
+11219|Centro de Estudios de la Cultura y la Comunicación
+11220|Centro de Estudios sobre Derecho, Globalización y Seguridad
+11221|Centro de Estudios de Género
+11222|Centro de Investigaciones Transdiciplinarias en Humanidades Ambientales, Artes y Literatura
+11301|Facultad de Contaduría y Administración
+11303|Facultad de Economía
+11304|Facultad de Estadística e Informática
+11305|Instituto de Investigaciones y Estudios Superiores Económicos y Sociales (IIESES)
+11306|Instituto de Investigaciones y Estudios Superiores de las Ciencias Administrativas (IIESCA)
+11307|Instituto de Investigaciones en Contaduría
+11309|Facultad de Ciencias Administrativas y Sociales
+11310|Centro de Estudios de Opinión y Análisis de la Universidad Veracruzana
+11402|Facultad de Medicina
+11404|Facultad de Bioanálisis
+11405|Facultad de Nutrición
+11406|Facultad de Enfermería
+11407|Facultad de Psicología
+11408|Instituto de Ciencias de la Salud
+11409|Instituto de Investigaciones Psicológicas
+11411|Instituto de Salud Pública
+11413|Instituto de Psicología y Educación
+11414|Centro de Investigaciones Biomédicas
+11415|Instituto de Investigaciones Cerebrales
+11502|Facultad de Biología
+11503|Facultad de Ciencias Agricolas
+11504|Instituto de Investigaciones Biológicas
+11505|Instituto de Neuroetologia
+11506|Instituto de Investigaciones Forestales
+11508|Instituto de Biotecnología y Ecología Aplicada (INBIOTECA)
+11509|Centro de Investigaciones Tropicales
+11511|Centro de Investigación en Micología Aplicada (CIMA)
+11602|Facultad de Música
+11603|Facultad de Danza
+11604|Facultad de Artes Plásticas
+11605|Facultad de Teatro
+11606|Instituto de Artes Plásticas
+11609|Centro de Estudios, Creación y Documentación de las Artes (CECDA)
+11701|Dirección General del Sistema de Enseñanza Abierta
+11702|Escuela para Estudiantes Extranjeros-UV
+11703|Dirección General de la Unidad de Estudios de Posgrado
+11704|Universidad Veracruzana Intercultural
+11705|Dirección de los Centros de Idiomas y Autoacceso
+11709|Centro de EcoAlfabetización y Diálogo de Saberes
+11728|Centro de Investigación e Innovación en Educación Superior
+11802|Centro de Idiomas y de Autoacceso
+11925|Dirección General del Área Académica Biológico-Agropecuarias
+11927|Dirección General de Investigaciones
+11979|Dirección del Área de Formación Básica`.split("\n").map(l=>l.replace("|"," - "));
+
+const S={
+ nuba:["Nula","Baja","Media","Alta"],
+ npre:["Nada","Poco","Regular","Mucho"],
+ npsm:["Nada","Poco","Suficiente","Mucho"],
+ val:["Negativa","Indiferente","Positiva","Muy positiva"]
+};
+const IA=["Word","Excel","Power point","Software estadístico (SPSS, otros)","Software para análisis cualitativo (Atlas ti, Etnograph, etc)","Software especializado de mi disciplina","IA generativa","IA diseño, video, multimedia","IA audio y música","Otra IA"];
+
+// Bloque repetido de las secciones 3, 4 y 5
+function bloque(s,nom,txt){
+ const p="p"+s+"_";
+ return [
+ {id:p+"1",n:s+".1",t:"Enuncie en 5 palabras lo primero que piensa cuando se habla sobre la "+nom+" en la educación superior.",type:"words"},
+ {id:p+"2",n:s+".2",t:"¿Cuánto conoce sobre la "+txt+"?",type:"scale",o:S.npsm},
+ {id:p+"3",n:s+".3",t:"¿Qué valoración tiene sobre la "+txt+"?",type:"scale",o:S.val},
+ {id:p+"4",n:s+".4",t:"¿Qué tan optimista se siente frente a la "+txt+"?",type:"scale",o:S.npsm},
+ {id:p+"5",n:s+".5",t:"¿Qué tan razonables le parecen las iniciativas de "+txt+"?",type:"scale",o:S.npsm},
+ {id:p+"6",n:s+".6",t:"¿Qué tanto participa por las iniciativas de "+txt+"?",type:"scale",o:S.npsm},
+ {id:p+"7",n:s+".7",t:"¿Qué tan riesgosa resulta la "+txt+"?",type:"scale",o:S.npsm},
+ {id:p+"8",n:s+".8",t:"Enuncie en 5 palabras la experiencia más positiva en "+txt+" que ha vivido como profesor universitario.",type:"words"},
+ {id:p+"9",n:s+".9",t:"Enuncie en 5 palabras la experiencia más negativa en "+txt+" que ha vivido como profesor universitario.",type:"words"}];
+}
+
+const SEC=[
+ {h:"1.- Datos generales",q:[
+  {id:"p1_1_dependencia",n:"1.1",t:"Marque su dependencia de adscripción principal.",type:"select",o:DEP,ph:"Seleccione su dependencia"},
+  {n:"1.2",t:"Seleccione el tiempo de horas de trabajo y su tipo de contratación.",type:"multi",f:[
+    {id:"p1_2_tiempo",l:"Tiempo",o:["Tiempo completo","Medio tiempo","Por horas"]},
+    {id:"p1_2_contrato",l:"Tipo de contrato",o:["Técnico académico","Docente","Investigador","Artista"]}]},
+  {n:"1.3",t:"Marque su último grado de estudios y la disciplina en la que se especializa.",type:"multi",f:[
+    {id:"p1_3_grado",l:"Grado",o:["Licenciatura","Especialidad","Maestría","Doctorado"]},
+    {id:"p1_3_disciplina",l:"Disciplina",text:1}]},
+  {id:"p1_4_cursos",n:"1.4",t:"¿Qué cursos, talleres y diplomados en Innovación educativa ha tomado? Indique el año.",type:"area",hint:"Escriba uno por línea: nombre del curso, taller o diplomado — año.",opt:1},
+  {id:"p1_5",n:"1.5",t:"¿Cuál es su grado de dominio tecnológico?",type:"grid",o:S.nuba,rows:IA,otra:1}
+ ]},
+ {h:"2.- Representaciones Sociales sobre Innovación educativa",q:[
+  {id:"p2_1",n:"2.1",t:"Enuncie en 5 palabras lo primero que piensa cuando se habla sobre la Innovación educativa en la educación superior.",type:"words"},
+  {id:"p2_2",n:"2.2",t:"¿Qué disposición tiene sobre la innovación?",type:"scale",o:S.nuba},
+  {id:"p2_3",n:"2.3",t:"¿Qué disposición tiene para cuestionar sus prácticas educativas?",type:"scale",o:S.nuba},
+  {id:"p2_4",n:"2.4",t:"¿Qué disposición tiene para evaluar los resultados de su trabajo?",type:"scale",o:S.nuba},
+  {id:"p2_5",n:"2.5",t:"¿Qué disposición tiene para incorporar perspectivas, ideas, técnicas, tecnologías nuevas?",type:"scale",o:S.nuba},
+  {id:"p2_6",n:"2.6",t:"¿Qué tan abierto está a la crítica, a nuevas experiencias pedagógicas?",type:"scale",o:S.npre},
+  {id:"p2_7",n:"2.7",t:"¿Qué tan dispuesto está para experimentar en su trabajo académico?",type:"scale",o:S.npre}]},
+ {h:"3.- Representaciones Sociales sobre Innovación Didáctico-Pedagógica",q:bloque(3,"Innovación Didáctico-Pedagógica","innovación Didáctico-Pedagógica")},
+ {h:"4.- Representaciones Sociales sobre Innovación Tecnológica",q:bloque(4,"Innovación tecnológica","innovación tecnológica")},
+ {h:"5.- Representaciones Sociales sobre Innovación Organizacional",q:bloque(5,"Innovación organizacional","innovación organizacional")}
+];
+
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const opt=(o,ph)=>`<option value="">${ph||"Seleccione…"}</option>`+o.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+const KEYS=[];
+
+function draw(q){
+ const h=`<span class="n">${q.n}</span>${esc(q.t)}`;
+ if(q.type==="select"){KEYS.push([q.id,q.n+" Dependencia"]);return `<div class="card q"><label for="${q.id}">${h}</label><select id="${q.id}" name="${q.id}" required>${opt(q.o,q.ph)}</select></div>`}
+ if(q.type==="multi"){return `<div class="card q"><div class="lb">${h}</div><div class="row2">`+q.f.map(f=>{KEYS.push([f.id,q.n+" "+f.l]);
+   return `<div><span>${f.l}</span>`+(f.text?`<input type="text" name="${f.id}" required>`:`<select name="${f.id}" required>${opt(f.o)}</select>`)+`</div>`}).join("")+`</div></div>`}
+ if(q.type==="area"){KEYS.push([q.id,q.n+" Cursos/talleres/diplomados"]);return `<div class="card q"><label for="${q.id}">${h}</label><textarea id="${q.id}" name="${q.id}"></textarea><div class="hint">${q.hint}</div></div>`}
+ if(q.type==="words"){KEYS.push([q.id,q.n+" 5 palabras"]);return `<div class="card q" data-words="${q.id}"><div class="lb">${h}</div><div class="words">`+[1,2,3,4,5].map(i=>`<input type="text" placeholder="Palabra ${i}" aria-label="Palabra ${i}" required>`).join("")+`</div></div>`}
+ if(q.type==="scale"){KEYS.push([q.id,q.n]);return `<div class="card q"><div class="lb">${h}</div><div class="opts">`+q.o.map((o,i)=>`<label><input type="radio" name="${q.id}" value="${esc(o)}" required>${o}</label>`).join("")+`</div></div>`}
+ if(q.type==="grid"){
+  let t=`<div class="card q"><div class="lb">${h}</div><div class="grid"><table><thead><tr><th></th>${q.o.map(o=>`<th>${o}</th>`).join("")}</tr></thead><tbody>`;
+  q.rows.forEach((r,i)=>{const k=q.id+"_"+(i+1), last=q.otra&&i===q.rows.length-1;KEYS.push([k,q.n+" "+r]);
+   t+=`<tr><td>${r}${last?` ¿cuál? <input type="text" name="${k}_cual" aria-label="Otra IA, ¿cuál?">`:""}</td>`+q.o.map(o=>`<td><input type="radio" name="${k}" value="${o}" ${last?"":"required"} aria-label="${esc(r)}: ${o}"></td>`).join("")+`</tr>`;
+   if(last)KEYS.push([k+"_cual","1.5 Otra IA: ¿cuál?"]);});
+  return t+`</tbody></table></div></div>`}
+}
+$("#qs").innerHTML=SEC.map(s=>`<h2>${s.h}</h2>`+s.q.map(draw).join("")).join("");
+
+// Plantilla de campos para vincular con Google Forms
+$("#tpl").value="const ENTRY = {\n"+KEYS.map(k=>`  "${k[0]}": "",   // ${k[1]}`).join("\n")+"\n};";
+if(!FORM_URL||!Object.keys(ENTRY).length)$("#cfgbox").style.display="";
+$("#cfgbtn").onclick=()=>{const t=$("#tpl");t.style.display=t.style.display?"":"none";};
+
+$("#f").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const f=e.target,m=$("#msg");m.className="";
+ if(!f.checkValidity()){f.reportValidity();m.className="er";m.textContent="Por favor responda todas las preguntas obligatorias.";return}
+ const d={};
+ new FormData(f).forEach((v,k)=>{d[k]=v});
+ document.querySelectorAll("[data-words]").forEach(c=>{d[c.dataset.words]=[...c.querySelectorAll("input")].map(i=>i.value.trim()).join(", ")});
+ if(!FORM_URL){console.log("Respuestas (modo prueba):",d);m.className="er";m.textContent="Modo prueba: falta configurar FORM_URL. Las respuestas se muestran en la consola del navegador.";return}
+ const body=new URLSearchParams();
+ for(const k in d){if(ENTRY[k])body.append(ENTRY[k],d[k])}
+ const b=$("#btn");b.disabled=true;
+ try{
+  await fetch(FORM_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded"},body});
+  f.reset();m.className="ok";m.textContent="¡Muchas gracias por sus respuestas! Su información fue enviada.";window.scrollTo({top:0,behavior:"smooth"});
+ }catch(err){m.className="er";m.textContent="No se pudo enviar. Revise su conexión e inténtelo de nuevo."}
+ b.disabled=false;
+});
+</script>
+</body>
+</html>
